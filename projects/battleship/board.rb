@@ -12,36 +12,30 @@ class Board
     str[1..-1].to_i
   end
 
-  def has_ship_on?(str)
+  def has_ship_on?(x, y)
     @ships.any? do |ship|
-      ship.covers?(x_of(str), y_of(str))
+      ship.covers?(x, y)
     end
   end
 
-  def fire_at(str)
-    has_ship_on?(str)
+  def fire_at(x, y)
+    has_ship_on?(x, y)
   end
 
-  def has_ship_coords?(x,y)
-    @ships.any? do |ship|
-      ship.covers?(x,y)
-    end
-  end
-
-  def check_ship(ship, str, across)
+  def check_ship(ship, x, y, across)
     if across
-      coords = (x_of(str)...x_of(str)+ship.length).to_a.map!{|x|[x,y_of(str)]}
+      coords = (x...x+ship.length).to_a.map!{|xx|[xx,y]}
     else
-      coords = (y_of(str)...y_of(str)+ship.length).to_a.map!{|y|[x_of(str),y]}
+      coords = (y...y+ship.length).to_a.map!{|yy|[x,yy]}
     end
     coords.any? do |coord|
-      has_ship_coords?(coord[0],coord[1])
+      has_ship_on?(coord[0],coord[1])
     end
   end
 
-  def place_ship(ship, str, across)
-    unless check_ship(ship, str, across)
-      ship.place(x_of(str),y_of(str),across)
+  def place_ship(ship, x, y, across)
+    unless check_ship(ship, x, y, across)
+      ship.place(x, y, across)
       @ships << ship
     else
       false

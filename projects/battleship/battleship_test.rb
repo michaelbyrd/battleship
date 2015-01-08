@@ -90,81 +90,65 @@ class BattleshipTest < Minitest::Test
     assert Board
   end
 
-  def test_09_x_of
+  def test_09_empty_board
     board = Board.new
-    assert_equal 1, board.x_of("A1")
-    assert_equal 1, board.x_of("G1")
-    assert_equal 6, board.x_of("D6")
-    assert_equal 10, board.x_of("D10")
+    refute board.has_ship_on?(1, 1)
+    refute board.has_ship_on?(10, 7)
   end
 
-  def test_10_y_of
+  def test_10_place_ship
     board = Board.new
-    assert_equal 1, board.y_of("A1")
-    assert_equal 7, board.y_of("G1")
-    assert_equal 4, board.y_of("D6")
-    assert_equal 4, board.y_of("D10")
+    assert board.place_ship(Ship.new(4), 3, 3, true)
+    refute board.has_ship_on?(2, 3)
+    assert board.has_ship_on?(3, 3)
+    assert board.has_ship_on?(4, 3)
+    assert board.has_ship_on?(6, 3)
+    refute board.has_ship_on?(7, 3)
+    refute board.has_ship_on?(5, 4)
   end
 
-  def test_11_empty_board
+  def test_11_cant_place_overlapping_ships
     board = Board.new
-    refute board.has_ship_on?("A1")
-    refute board.has_ship_on?("G10")
+    assert board.place_ship(Ship.new(4), 3, 3, true)
+    refute board.place_ship(Ship.new(4), 1, 3, true)
+    refute board.place_ship(Ship.new(4), 4, 3, true)
+    refute board.place_ship(Ship.new(4), 4, 2, false)
   end
 
-  def test_12_place_ship
+  def test_12_misses_on_empty_board
     board = Board.new
-    assert board.place_ship(Ship.new(4), "C3", true)
-    refute board.has_ship_on?("C2")
-    assert board.has_ship_on?("C3")
-    assert board.has_ship_on?("C4")
-    assert board.has_ship_on?("C6")
-    refute board.has_ship_on?("C7")
-    refute board.has_ship_on?("D5")
+    refute board.fire_at(1, 1)
+    refute board.fire_at(10, 7)
   end
 
-  def test_13_cant_place_overlapping_ships
+  def test_13_hits_on_board
     board = Board.new
-    assert board.place_ship(Ship.new(4), "C3", true)
-    refute board.place_ship(Ship.new(4), "C4", true)
-    refute board.place_ship(Ship.new(4), "B4", false)
+    board.place_ship(Ship.new(4), 3, 3, true)
+    refute board.fire_at(1, 1)
+    assert board.fire_at(3, 3)
   end
 
-  def test_14_misses_on_empty_board
+  def test_14_repeat_miss
     board = Board.new
-    refute board.fire_at("A1")
-    refute board.fire_at("G10")
+    board.place_ship(Ship.new(4), 3, 3, true)
+    refute board.fire_at(1, 1)
+    refute board.fire_at(1, 1)
   end
 
-  def test_15_hits_on_board
+  def test_15_repeat_hit
     board = Board.new
-    board.place_ship(Ship.new(4), "C3", true)
-    refute board.fire_at("A1")
-    assert board.fire_at("C3")
+    board.place_ship(Ship.new(4), 3, 3, true)
+    assert board.fire_at(3, 3)
+    refute board.fire_at(3, 3)
   end
 
-  def test_16_repeat_miss
+  def test_16_misses_outside_board
     board = Board.new
-    board.place_ship(Ship.new(4), "C3", true)
-    refute board.fire_at("A1")
-    refute board.fire_at("A1")
+    refute board.fire_at(18, 1)
+    refute board.fire_at(10, 26)
   end
 
-  def test_17_repeat_hit
-    board = Board.new
-    board.place_ship(Ship.new(4), "C3", true)
-    assert board.fire_at("C3")
-    refute board.fire_at("C3")
-  end
-
-  def test_18_misses_outside_board
-    board = Board.new
-    refute board.fire_at("A18")
-    refute board.fire_at("Z10")
-    refute board.fire_at("MONKEY")
-  end
-
-  def test_19_empty_board_can_display_itself
+  def test_17_empty_board_can_display_itself
     board = Board.new
     assert_output(empty_board) do
       board.display
@@ -173,28 +157,28 @@ class BattleshipTest < Minitest::Test
 
   def empty_board
     %Q{    1   2   3   4   5   6   7   8   9   10
-  -----------------------------------------
-A |   |   |   |   |   |   |   |   |   |   |
-B |   |   |   |   |   |   |   |   |   |   |
-C |   |   |   |   |   |   |   |   |   |   |
-D |   |   |   |   |   |   |   |   |   |   |
-E |   |   |   |   |   |   |   |   |   |   |
-F |   |   |   |   |   |   |   |   |   |   |
-G |   |   |   |   |   |   |   |   |   |   |
-H |   |   |   |   |   |   |   |   |   |   |
-I |   |   |   |   |   |   |   |   |   |   |
-J |   |   |   |   |   |   |   |   |   |   |
-  -----------------------------------------
-}
+      -----------------------------------------
+      A |   |   |   |   |   |   |   |   |   |   |
+      B |   |   |   |   |   |   |   |   |   |   |
+      C |   |   |   |   |   |   |   |   |   |   |
+      D |   |   |   |   |   |   |   |   |   |   |
+      E |   |   |   |   |   |   |   |   |   |   |
+      F |   |   |   |   |   |   |   |   |   |   |
+      G |   |   |   |   |   |   |   |   |   |   |
+      H |   |   |   |   |   |   |   |   |   |   |
+      I |   |   |   |   |   |   |   |   |   |   |
+      J |   |   |   |   |   |   |   |   |   |   |
+      -----------------------------------------
+    }
   end
 
-  def test_20_full_board_can_display_itself
+  def test_18_full_board_can_display_itself
     board = Board.new
-    board.place_ship(Ship.new(2), "F3", true)
-    board.place_ship(Ship.new(3), "D7", true)
-    board.place_ship(Ship.new(3), "H4", true)
-    board.place_ship(Ship.new(4), "A1", true)
-    board.place_ship(Ship.new(5), "B6", false)
+    board.place_ship(Ship.new(2), 3, 6, true)
+    board.place_ship(Ship.new(3), 7, 4, true)
+    board.place_ship(Ship.new(3), 4, 8, true)
+    board.place_ship(Ship.new(4), 1, 1, true)
+    board.place_ship(Ship.new(5), 6, 2, false)
     assert_output(full_board) do
       board.display
     end
@@ -202,26 +186,26 @@ J |   |   |   |   |   |   |   |   |   |   |
 
   def full_board
     %Q{    1   2   3   4   5   6   7   8   9   10
-  -----------------------------------------
-A | O | O | O | O |   |   |   |   |   |   |
-B |   |   |   |   |   | O |   |   |   |   |
-C |   |   |   |   |   | O |   |   |   |   |
-D |   |   |   |   |   | O | O | O | O |   |
-E |   |   |   |   |   | O |   |   |   |   |
-F |   |   | O | O |   | O |   |   |   |   |
-G |   |   |   |   |   |   |   |   |   |   |
-H |   |   |   | O | O | O |   |   |   |   |
-I |   |   |   |   |   |   |   |   |   |   |
-J |   |   |   |   |   |   |   |   |   |   |
-  -----------------------------------------
-}
+      -----------------------------------------
+      A | O | O | O | O |   |   |   |   |   |   |
+      B |   |   |   |   |   | O |   |   |   |   |
+      C |   |   |   |   |   | O |   |   |   |   |
+      D |   |   |   |   |   | O | O | O | O |   |
+      E |   |   |   |   |   | O |   |   |   |   |
+      F |   |   | O | O |   | O |   |   |   |   |
+      G |   |   |   |   |   |   |   |   |   |   |
+      H |   |   |   | O | O | O |   |   |   |   |
+      I |   |   |   |   |   |   |   |   |   |   |
+      J |   |   |   |   |   |   |   |   |   |   |
+      -----------------------------------------
+    }
   end
 
-  def test_21_used_board_can_display_itself
+  def test_19_used_board_can_display_itself
     board = Board.new
-    board.place_ship(Ship.new(4), "D6", true)
-    board.fire_at("D7")
-    board.fire_at("E7")
+    board.place_ship(Ship.new(4), 6, 4, true)
+    board.fire_at(7, 4)
+    board.fire_at(7, 5)
     assert_output(used_board) do
       board.display
     end
@@ -229,72 +213,91 @@ J |   |   |   |   |   |   |   |   |   |   |
 
   def used_board
     %Q{    1   2   3   4   5   6   7   8   9   10
-  -----------------------------------------
-A |   |   |   |   |   |   |   |   |   |   |
-B |   |   |   |   |   |   |   |   |   |   |
-C |   |   |   |   |   |   |   |   |   |   |
-D |   |   |   |   |   | O | X | O | O |   |
-E |   |   |   |   |   |   |   |   |   |   |
-F |   |   |   |   |   |   |   |   |   |   |
-G |   |   |   |   |   |   |   |   |   |   |
-H |   |   |   |   |   |   |   |   |   |   |
-I |   |   |   |   |   |   |   |   |   |   |
-J |   |   |   |   |   |   |   |   |   |   |
-  -----------------------------------------
-}
+      -----------------------------------------
+      A |   |   |   |   |   |   |   |   |   |   |
+      B |   |   |   |   |   |   |   |   |   |   |
+      C |   |   |   |   |   |   |   |   |   |   |
+      D |   |   |   |   |   | O | X | O | O |   |
+      E |   |   |   |   |   |   |   |   |   |   |
+      F |   |   |   |   |   |   |   |   |   |   |
+      G |   |   |   |   |   |   |   |   |   |   |
+      H |   |   |   |   |   |   |   |   |   |   |
+      I |   |   |   |   |   |   |   |   |   |   |
+      J |   |   |   |   |   |   |   |   |   |   |
+      -----------------------------------------
+    }
   end
 
-  def test_22_entire_board_can_be_sunk
+  def test_20_entire_board_can_be_sunk
     board = Board.new
     refute board.sunk?
-    board.place_ship(Ship.new(2), "D6", true)
+    board.place_ship(Ship.new(2), 6, 4, true)
     refute board.sunk?
-    board.fire_at("D6")
+    board.fire_at(6, 4)
     refute board.sunk?
-    board.fire_at("D7")
+    board.fire_at(7, 4)
     assert board.sunk?
   end
 
 
 
-  def test_23_player_classes_exist
+  def test_21_player_classes_exist
     assert Player
     assert HumanPlayer
     assert ComputerPlayer
   end
 
-  def test_24_players_have_inheritance
+  def test_22_players_have_inheritance
     assert_equal Player, HumanPlayer.superclass
     assert_equal Player, ComputerPlayer.superclass
   end
 
-  def test_25_humans_can_be_named
+  def test_23_humans_can_be_named
     assert_equal "Alice", HumanPlayer.new("Alice").name
   end
 
-  def test_26_computers_cannot_be_named
+  def test_24_computers_cannot_be_named
     assert_raises(ArgumentError) do
       ComputerPlayer.new("The Red Queen")
     end
   end
 
-  def test_27_players_have_default_names
+  def test_25_players_have_default_names
     assert_equal "Dave", HumanPlayer.new.name
     assert_equal "HAL 9000", ComputerPlayer.new.name
   end
 
-  def test_28_players_have_boards
+  def test_26_players_have_boards
     assert_equal Board, HumanPlayer.new.board.class
     assert_equal Board, ComputerPlayer.new.board.class
   end
 
-  def test_29_computer_player_automatically_places_ships
+  def test_27_computer_player_automatically_places_ships
     player = ComputerPlayer.new
     assert_output("HAL 9000 has placed his ships.\n") do
       assert player.place_ships([2, 3, 3, 4, 5])
     end
     assert_equal 5, player.ships.length
     assert_equal 4, player.ships[3].length
+  end
+
+
+  def test_28_x_of
+    board = Board.new
+    assert_equal 1, board.x_of("A1")
+    assert_equal 1, board.x_of("G1")
+    assert_equal 6, board.x_of("D6")
+    assert_equal 10, board.x_of("D10")
+  end
+
+  def test_29_y_of
+    board = Board.new
+    assert_equal 1, board.y_of("A1")
+    assert_equal 7, board.y_of("G1")
+    assert_equal 4, board.y_of("D6")
+    assert_equal 4, board.y_of("D10")
+
+    # refute board.fire_at("MONKEY")
   end
 
   def test_30_human_player_is_asked_to_place_ships
@@ -305,15 +308,15 @@ J |   |   |   |   |   |   |   |   |   |   |
     $mock_inputs << "A4"
     $mock_inputs << "Down"
     assert_output("Dave, where would you like to place a ship of length 2?\nAcross or Down?\n"+
-                  "Dave, where would you like to place a ship of length 5?\nAcross or Down?\n") do
+    "Dave, where would you like to place a ship of length 5?\nAcross or Down?\n") do
       assert player.place_ships([2, 5])
     end
     assert_equal 2, player.ships.length
     assert_equal 5, player.ships[1].length
-    assert player.board.has_ship_on?("A1")
-    assert player.board.has_ship_on?("A4")
-    assert player.board.has_ship_on?("B1")
-    refute player.board.has_ship_on?("C1")
+    assert player.board.has_ship_on?(1, 1)
+    assert player.board.has_ship_on?(4, 1)
+    assert player.board.has_ship_on?(1, 2)
+    refute player.board.has_ship_on?(1, 3)
   end
 
 
@@ -344,10 +347,10 @@ J |   |   |   |   |   |   |   |   |   |   |
     set_up_new_game
 
     assert_equal 5, @human.ships.length
-    assert @human.board.has_ship_on?("B1")
-    assert @human.board.has_ship_on?("C3")
-    assert @human.board.has_ship_on?("E9")
-    refute @human.board.has_ship_on?("E7")
+    assert @human.board.has_ship_on?(1, 2)
+    assert @human.board.has_ship_on?(3, 3)
+    assert @human.board.has_ship_on?(9, 5)
+    refute @human.board.has_ship_on?(7, 7)
 
     assert_equal 5, @computer.ships.length
     assert_equal 4, @computer.ships[3].length
@@ -369,11 +372,11 @@ J |   |   |   |   |   |   |   |   |   |   |
     $mock_inputs << "A9"
     $mock_inputs << "Down"
     assert_output("Frank, where would you like to place a ship of length 2?\nAcross or Down?\n"+
-                  "Frank, where would you like to place a ship of length 3?\nAcross or Down?\n"+
-                  "Frank, where would you like to place a ship of length 3?\nAcross or Down?\n"+
-                  "Frank, where would you like to place a ship of length 4?\nAcross or Down?\n"+
-                  "Frank, where would you like to place a ship of length 5?\nAcross or Down?\n"+
-                  "HAL 9000 has placed his ships.\n") do
+    "Frank, where would you like to place a ship of length 3?\nAcross or Down?\n"+
+    "Frank, where would you like to place a ship of length 3?\nAcross or Down?\n"+
+    "Frank, where would you like to place a ship of length 4?\nAcross or Down?\n"+
+    "Frank, where would you like to place a ship of length 5?\nAcross or Down?\n"+
+    "HAL 9000 has placed his ships.\n") do
       @game.place_ships
     end
   end
@@ -388,8 +391,8 @@ J |   |   |   |   |   |   |   |   |   |   |
     $mock_inputs << "A3"
     $mock_inputs << "Down"
     assert_output("Alice, where would you like to place a ship of length 2?\nAcross or Down?\n"+
-                  "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
-                  "HAL 9000 has placed his ships.\n") do
+    "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
+    "HAL 9000 has placed his ships.\n") do
       game.place_ships
     end
   end
@@ -406,10 +409,10 @@ J |   |   |   |   |   |   |   |   |   |   |
     $mock_inputs << "F1"
     $mock_inputs << "Across"
     assert_output("Alice, where would you like to place a ship of length 2?\nAcross or Down?\n"+
-                  "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
-                  "Unfortunately, that ship overlaps with one of your other ships.  Please try again.\n"+
-                  "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
-                  "HAL 9000 has placed his ships.\n") do
+    "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
+    "Unfortunately, that ship overlaps with one of your other ships.  Please try again.\n"+
+    "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
+    "HAL 9000 has placed his ships.\n") do
       game.place_ships
     end
   end
@@ -446,33 +449,33 @@ J |   |   |   |   |   |   |   |   |   |   |
 
   def starting_game_status
     %Q{    1   2   3   4   5   6   7   8   9   10
-  -----------------------------------------
-A |   |   |   |   |   |   |   |   |   |   |
-B |   |   |   |   |   |   |   |   |   |   |
-C |   |   |   |   |   |   |   |   |   |   |
-D |   |   |   |   |   |   |   |   |   |   |
-E |   |   |   |   |   |   |   |   |   |   |
-F |   |   |   |   |   |   |   |   |   |   |
-G |   |   |   |   |   |   |   |   |   |   |
-H |   |   |   |   |   |   |   |   |   |   |
-I |   |   |   |   |   |   |   |   |   |   |
-J |   |   |   |   |   |   |   |   |   |   |
-  -----------------------------------------
+      -----------------------------------------
+      A |   |   |   |   |   |   |   |   |   |   |
+      B |   |   |   |   |   |   |   |   |   |   |
+      C |   |   |   |   |   |   |   |   |   |   |
+      D |   |   |   |   |   |   |   |   |   |   |
+      E |   |   |   |   |   |   |   |   |   |   |
+      F |   |   |   |   |   |   |   |   |   |   |
+      G |   |   |   |   |   |   |   |   |   |   |
+      H |   |   |   |   |   |   |   |   |   |   |
+      I |   |   |   |   |   |   |   |   |   |   |
+      J |   |   |   |   |   |   |   |   |   |   |
+      -----------------------------------------
 
-    1   2   3   4   5   6   7   8   9   10
-  -----------------------------------------
-A | O |   | O |   | O |   | O |   | O |   |
-B | O |   | O |   | O |   | O |   | O |   |
-C |   |   | O |   | O |   | O |   | O |   |
-D |   |   |   |   |   |   | O |   | O |   |
-E |   |   |   |   |   |   |   |   | O |   |
-F |   |   |   |   |   |   |   |   |   |   |
-G |   |   |   |   |   |   |   |   |   |   |
-H |   |   |   |   |   |   |   |   |   |   |
-I |   |   |   |   |   |   |   |   |   |   |
-J |   |   |   |   |   |   |   |   |   |   |
-  -----------------------------------------
-}
+      1   2   3   4   5   6   7   8   9   10
+      -----------------------------------------
+      A | O |   | O |   | O |   | O |   | O |   |
+      B | O |   | O |   | O |   | O |   | O |   |
+      C |   |   | O |   | O |   | O |   | O |   |
+      D |   |   |   |   |   |   | O |   | O |   |
+      E |   |   |   |   |   |   |   |   | O |   |
+      F |   |   |   |   |   |   |   |   |   |   |
+      G |   |   |   |   |   |   |   |   |   |   |
+      H |   |   |   |   |   |   |   |   |   |   |
+      I |   |   |   |   |   |   |   |   |   |   |
+      J |   |   |   |   |   |   |   |   |   |   |
+      -----------------------------------------
+    }
   end
 
   def test_40_game_status_shows_hits_and_misses
@@ -511,33 +514,33 @@ J |   |   |   |   |   |   |   |   |   |   |
 
   def mid_game_status
     %Q{    1   2   3   4   5   6   7   8   9   10
-  -----------------------------------------
-A |   |   |   |   |   |   |   |   |   |   |
-B |   |   |   |   |   |   |   |   |   |   |
-C |   |   |   |   |   |   |   |   |   |   |
-D |   |   |   |   |   |   |   |   |   |   |
-E |   |   |   |   |   |   |   |   |   |   |
-F |   |   | + |   |   |   |   |   |   |   |
-G |   |   |   |   |   |   |   |   |   |   |
-H |   |   |   | - |   |   |   |   |   |   |
-I |   |   |   |   |   |   |   |   |   |   |
-J |   |   |   |   |   |   |   |   |   |   |
-  -----------------------------------------
+      -----------------------------------------
+      A |   |   |   |   |   |   |   |   |   |   |
+      B |   |   |   |   |   |   |   |   |   |   |
+      C |   |   |   |   |   |   |   |   |   |   |
+      D |   |   |   |   |   |   |   |   |   |   |
+      E |   |   |   |   |   |   |   |   |   |   |
+      F |   |   | + |   |   |   |   |   |   |   |
+      G |   |   |   |   |   |   |   |   |   |   |
+      H |   |   |   | - |   |   |   |   |   |   |
+      I |   |   |   |   |   |   |   |   |   |   |
+      J |   |   |   |   |   |   |   |   |   |   |
+      -----------------------------------------
 
-    1   2   3   4   5   6   7   8   9   10
-  -----------------------------------------
-A |   | X |   |   |   |   |   |   |   |   |
-B |   | O |   |   |   |   |   |   |   |   |
-C |   |   |   |   |   |   |   |   |   |   |
-D |   |   |   |   |   |   |   |   |   |   |
-E |   |   |   |   |   |   |   |   |   |   |
-F |   |   |   |   |   |   |   |   |   |   |
-G |   |   |   |   |   |   |   |   |   |   |
-H |   |   |   |   |   |   |   |   |   |   |
-I |   |   |   |   |   |   |   |   |   |   |
-J |   |   |   |   |   |   |   |   |   |   |
-  -----------------------------------------
-}
+      1   2   3   4   5   6   7   8   9   10
+      -----------------------------------------
+      A |   | X |   |   |   |   |   |   |   |   |
+      B |   | O |   |   |   |   |   |   |   |   |
+      C |   |   |   |   |   |   |   |   |   |   |
+      D |   |   |   |   |   |   |   |   |   |   |
+      E |   |   |   |   |   |   |   |   |   |   |
+      F |   |   |   |   |   |   |   |   |   |   |
+      G |   |   |   |   |   |   |   |   |   |   |
+      H |   |   |   |   |   |   |   |   |   |   |
+      I |   |   |   |   |   |   |   |   |   |   |
+      J |   |   |   |   |   |   |   |   |   |   |
+      -----------------------------------------
+    }
   end
 
   def test_41_game_can_be_won
