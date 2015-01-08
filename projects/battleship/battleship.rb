@@ -19,6 +19,10 @@ class Ship
     end
   end
 
+  def fire_at(x,y)
+    coords_covered.include?([x,y])
+  end
+
   def coords_covered
     if @across
       (@x...@x+self.length).to_a.map!{|x| [x,@y]}
@@ -32,10 +36,10 @@ class Ship
   end
 
   def overlaps_with?(ship)
-   if coords_covered & ship.coords_covered == []
-     false
-   else
-     true
-   end
+    if coords_covered & ship.coords_covered == []
+      false
+    else
+      true
+    end
   end
 end
