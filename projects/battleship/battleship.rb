@@ -19,20 +19,23 @@ class Ship
     end
   end
 
-  def covers?(x,y)
+  def coords_covered
     if @across
-      if @y == y && (@x...@x+self.length).to_a.include?(x)
-        true
-      else
-        false
-      end
+      (@x...@x+self.length).to_a.map!{|x| [x,@y]}
     else
-      if @x == x && (@y...@y+self.length).to_a.include?(y)
-        true
-      else
-        false
-      end
+      (@y...@y+self.length).to_a.map!{|y| [@x,y]}
     end
   end
 
+  def covers?(x,y)
+    coords_covered.include?([x,y])
+  end
+
+  def overlaps_with?(ship)
+   if coords_covered & ship.coords_covered == []
+     false
+   else
+     true
+   end
+  end
 end
