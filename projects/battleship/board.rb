@@ -13,13 +13,21 @@ class Board
   end
 
   def has_ship_on?(str)
-    @ships.each do |ship|
-      ship.covers?(x_of(str), y_of(str))
+    if @ships == []
+      false
+    else
+      @ships.any? do |ship|
+        ship.covers?(x_of(str), y_of(str))
+      end
     end
   end
 
   def place_ship(ship, str, across)
-    ship.place(x_of(str),y_of(str),across)
-    @ships << ship
+    unless has_ship_on?(str)
+      ship.place(x_of(str),y_of(str),across)
+      @ships << ship
+    else
+      false
+    end
   end
 end
