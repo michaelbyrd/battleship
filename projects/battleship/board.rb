@@ -57,7 +57,7 @@ class Board
 
   def print_rows
     letters = ('A'..'J').to_a
-    data = builder
+    data = draw_ships
     data.length.times do |i|
       print_row(letters[i], data[i])
     end
@@ -83,15 +83,10 @@ class Board
     grid
   end
 
-  def builder
+  def draw_ships
     grid = super_grid
-    coords = ship_coords
-    10.times do |i|
-      10.times do |j|
-        if coords.include?([j+1, i+1])
-          grid[i][j] = 'O'
-        end
-      end
+    ship_coords.each do |coord|
+      grid[coord[1]-1][coord[0]-1] = 'O'
     end
     return grid
   end
