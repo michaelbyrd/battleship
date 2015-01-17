@@ -73,6 +73,13 @@ class Board
 
   ARRAY_OF_SPACES=[" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
 
+  def super_grid
+    grid = []
+    10.times do
+      grid << ARRAY_OF_SPACES.clone
+    end
+    grid
+  end
   def build_arrays
     coords = ship_coords
     tbr = []
@@ -107,3 +114,6 @@ class Board
     print "    "
   end
 end
+
+
+
