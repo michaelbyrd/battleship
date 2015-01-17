@@ -76,16 +76,16 @@ class Board
   def build_arrays
     coords = ship_coords
     tbr = []
-    10.times do |i|
-      tbr << builder(i, coords)
+    (1..10).to_a.each do |y|
+      tbr << builder(y, coords)
     end
     tbr
   end
 
-  def builder(y, array)
+  def builder(y, coords)
     arr = ARRAY_OF_SPACES.clone
-    10.times do |i|
-      if array.include?([i+1,y+1])
+    (1..10).to_a.each do |i|
+      if coords.include?([i,y])
         arr[i] = '0'
       end
     end
