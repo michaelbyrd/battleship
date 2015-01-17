@@ -14,6 +14,16 @@ class Board
     str[1..-1].to_i
   end
 
+  def sunk?
+    if @ships.empty?
+      return false
+    else
+      @ships.all? do |ship|
+        ship.sunk?
+      end
+    end
+  end
+
   def has_ship_on?(x, y)
     @ships.any? do |ship|
       if ship.covers?(x, y)
