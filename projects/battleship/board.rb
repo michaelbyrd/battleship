@@ -65,7 +65,9 @@ class Board
   def ship_coords
     tbr = []
     @ships.each do |s|
-      tbr << s.coords_covered
+      s.coords_covered.each do |c|
+        tbr << c
+      end
     end
     tbr
   end
@@ -85,12 +87,13 @@ class Board
     coords = ship_coords
     10.times do |i|
       10.times do |j|
-        if coords.include?([i+1, j+1])
+        if coords.include?([j+1, i+1])
           grid[i][j] = '0'
         end
       end
     end
     print grid
+    print coords
 
   end
 
