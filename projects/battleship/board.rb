@@ -58,9 +58,18 @@ class Board
 
   def print_rows
     letters = ('A'..'J').to_a
+    arrays = build_arrays
     10.times do |i|
-      print_row(letters[i], ARRAY_OF_SPACES)
+      print_row(letters[i], arrays[i])
     end
+  end
+
+  def build_arrays
+    tbr = []
+    10.times do
+      tbr << ARRAY_OF_SPACES
+    end
+    tbr
   end
 
   def print_header
