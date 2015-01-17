@@ -84,9 +84,21 @@ class Board
   end
 
   def draw_ships
+    # grid = [[],[],[],[],[],[],[],[],[],[]]
     grid = super_grid
     ship_coords.each do |coord|
       grid[coord[1]-1][coord[0]-1] = 'O'
+    end
+    return grid
+  end
+
+  def fill_in_grid(grid)
+    grid.each do |outer_array|
+      outer_array.each do |box|
+        if box.nil?
+          box = ' '
+        end
+      end
     end
     return grid
   end
