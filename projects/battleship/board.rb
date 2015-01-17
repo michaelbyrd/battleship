@@ -89,6 +89,7 @@ class Board
     ship_coords.each do |coord|
       grid[coord[1]-1][coord[0]-1] = 'O'
     end
+    # grid = fill_in_grid(grid)
     return grid
   end
 
