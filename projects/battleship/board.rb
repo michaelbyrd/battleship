@@ -48,7 +48,6 @@ class Board
     end
   end
 
-  ARRAY_OF_SPACES = [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
 
   def display
     print_header
@@ -64,7 +63,18 @@ class Board
     end
   end
 
+  def ship_coords
+    tbr = []
+    @ships.each do |s|
+      tbr << s.coords_covered
+    end
+    tbr
+  end
+
+  ARRAY_OF_SPACES=[" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
+
   def build_arrays
+    coords = ship_coords
     tbr = []
     10.times do
       tbr << ARRAY_OF_SPACES
