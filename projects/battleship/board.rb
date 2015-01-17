@@ -57,8 +57,9 @@ class Board
   end
 
   def print_rows
-    ('A'..'J').to_a.each do |letter|
-      print_row(letter, ARRAY_OF_SPACES)
+    letters = ('A'..'J').to_a
+    10.times do |i|
+      print_row(letters[i], ARRAY_OF_SPACES)
     end
   end
 
