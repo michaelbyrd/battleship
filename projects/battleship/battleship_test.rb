@@ -308,7 +308,7 @@ class BattleshipTest < Minitest::Test
     $mock_inputs << "A4"
     $mock_inputs << "Down"
     assert_output("Dave, where would you like to place a ship of length 2?\nAcross or Down?\n"+
-    "Dave, where would you like to place a ship of length 5?\nAcross or Down?\n") do
+                  "Dave, where would you like to place a ship of length 5?\nAcross or Down?\n") do
       assert player.place_ships([2, 5])
     end
     assert_equal 2, player.ships.length
@@ -372,13 +372,13 @@ class BattleshipTest < Minitest::Test
     $mock_inputs << "A9"
     $mock_inputs << "Down"
     assert_output("Frank, where would you like to place a ship of length 2?\nAcross or Down?\n"+
-    "Frank, where would you like to place a ship of length 3?\nAcross or Down?\n"+
-    "Frank, where would you like to place a ship of length 3?\nAcross or Down?\n"+
-    "Frank, where would you like to place a ship of length 4?\nAcross or Down?\n"+
-    "Frank, where would you like to place a ship of length 5?\nAcross or Down?\n"+
-    "HAL 9000 has placed his ships.\n") do
-      @game.place_ships
-    end
+                  "Frank, where would you like to place a ship of length 3?\nAcross or Down?\n"+
+                  "Frank, where would you like to place a ship of length 3?\nAcross or Down?\n"+
+                  "Frank, where would you like to place a ship of length 4?\nAcross or Down?\n"+
+                  "Frank, where would you like to place a ship of length 5?\nAcross or Down?\n"+
+                  "HAL 9000 has placed his ships.\n") do
+                    @game.place_ships
+                  end
   end
 
   def test_35_game_can_have_nonstandard_set_of_ships
@@ -391,10 +391,10 @@ class BattleshipTest < Minitest::Test
     $mock_inputs << "A3"
     $mock_inputs << "Down"
     assert_output("Alice, where would you like to place a ship of length 2?\nAcross or Down?\n"+
-    "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
-    "HAL 9000 has placed his ships.\n") do
-      game.place_ships
-    end
+                  "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
+                  "HAL 9000 has placed his ships.\n") do
+                    game.place_ships
+                  end
   end
 
   def test_36_game_tells_you_if_your_ships_overlap
@@ -409,12 +409,12 @@ class BattleshipTest < Minitest::Test
     $mock_inputs << "F1"
     $mock_inputs << "Across"
     assert_output("Alice, where would you like to place a ship of length 2?\nAcross or Down?\n"+
-    "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
-    "Unfortunately, that ship overlaps with one of your other ships.  Please try again.\n"+
-    "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
-    "HAL 9000 has placed his ships.\n") do
-      game.place_ships
-    end
+                  "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
+                  "Unfortunately, that ship overlaps with one of your other ships.  Please try again.\n"+
+                  "Alice, where would you like to place a ship of length 3?\nAcross or Down?\n"+
+                  "HAL 9000 has placed his ships.\n") do
+                    game.place_ships
+                  end
   end
 
   def test_37_human_can_take_first_turn
