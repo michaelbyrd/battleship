@@ -57,9 +57,8 @@ class Board
 
   def print_rows
     letters = ('A'..'J').to_a
-    arrays = build_arrays
     10.times do |i|
-      print_row(letters[i], arrays[i])
+      print_row(letters[i], '0')
     end
   end
 
@@ -80,23 +79,19 @@ class Board
     end
     grid
   end
-  def build_arrays
-    coords = ship_coords
-    tbr = []
-    (1..10).to_a.each do |y|
-      tbr << builder(y, coords)
-    end
-    tbr
-  end
 
-  def builder(y, coords)
-    arr = ARRAY_OF_SPACES.clone
-    (1..10).to_a.each do |i|
-      if coords.include?([i,y])
-        arr[i] = '0'
+  def builder(coords)
+    grid = super_grid
+    coords = ship_coords
+    10.times do |i|
+      10.times do |j|
+        if coords.include?([i+1, j+1])
+          grid[i][j] = '0'
+        end
       end
     end
-    arr
+    print grid
+
   end
 
   def print_header
