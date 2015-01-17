@@ -2,6 +2,8 @@ class Board
   Y_COORDS = [ "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" ]
   def initialize
     @ships = []
+    @hits =[]
+    @misses = []
   end
 
   def y_of(str)
@@ -14,12 +16,16 @@ class Board
 
   def has_ship_on?(x, y)
     @ships.any? do |ship|
-      ship.covers?(x, y)
+      if ship.covers?(x, y)
+        return ship
+      end
     end
   end
 
   def fire_at(x, y)
-    has_ship_on?(x, y)
+    if has_ship_on?(x,y)
+      has_ship_on?(x,y).fire_at(x,y)
+    end
   end
 
   def check_ship(ship, x, y, across)
@@ -42,11 +48,18 @@ class Board
     end
   end
 
+  ARRAY_OF_SPACES = [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
+
   def display
     print_header
-    print_row('A', "\n")
-    print_row('B', '')
-    print empty
+    print_rows
+    print footer
+  end
+
+  def print_rows
+    ('A'..'J').to_a.each do |letter|
+      print_row(letter, ARRAY_OF_SPACES)
+    end
   end
 
   def print_header
@@ -54,21 +67,13 @@ class Board
     print "      -----------------------------------------\n"
   end
 
-  def print_row(letter, newline)
-    print "      #{letter} |   |   |   |   |   |   |   |   |   |   |#{newline}"
+
+  def print_row(l, a)
+    print "      #{l} | #{a[0]} | #{a[1]} | #{a[2]} | #{a[3]} | #{a[4]} | #{a[5]} | #{a[6]} | #{a[7]} | #{a[8]} | #{a[9]} |\n"
   end
 
-  def empty
-    %Q{
-      C |   |   |   |   |   |   |   |   |   |   |
-      D |   |   |   |   |   |   |   |   |   |   |
-      E |   |   |   |   |   |   |   |   |   |   |
-      F |   |   |   |   |   |   |   |   |   |   |
-      G |   |   |   |   |   |   |   |   |   |   |
-      H |   |   |   |   |   |   |   |   |   |   |
-      I |   |   |   |   |   |   |   |   |   |   |
-      J |   |   |   |   |   |   |   |   |   |   |
-      -----------------------------------------
-    }
+  def footer
+    print "      -----------------------------------------\n"
+    print "    "
   end
 end
