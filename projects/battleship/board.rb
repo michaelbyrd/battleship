@@ -1,3 +1,7 @@
+require './player'
+require './human_player'
+require './computer_player'
+
 class Board
   Y_COORDS = [ "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" ]
   def initialize
