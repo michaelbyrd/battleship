@@ -24,6 +24,7 @@ class Board
 
   def fire_at(x, y)
     if has_ship_on?(x,y)
+      @hits << [x,y]
       has_ship_on?(x,y).fire_at(x,y)
     end
   end
@@ -48,7 +49,6 @@ class Board
     end
   end
 
-
   def display
     print_header
     print_rows
@@ -57,7 +57,7 @@ class Board
 
   def print_rows
     letters = ('A'..'J').to_a
-    data = draw_ships
+    data = build_board
     data.length.times do |i|
       print_row(letters[i], data[i])
     end
@@ -83,11 +83,15 @@ class Board
     grid
   end
 
-  def draw_ships
+  def build_board
     # grid = [[],[],[],[],[],[],[],[],[],[]]
     grid = super_grid
     ship_coords.each do |coord|
       grid[coord[1]-1][coord[0]-1] = 'O'
+    end
+
+    @hits.each do |hit|
+      grid[hit[1]-1][hit[0]-1] = 'X'
     end
     # grid = fill_in_grid(grid)
     return grid
