@@ -16,8 +16,6 @@ class HumanPlayer < Player
   def place_ships(lengths)
     lengths.each do |l|
       print_line(l)
-      coord = get_user_input
-      across = get_user_input
     end
   end
 end
